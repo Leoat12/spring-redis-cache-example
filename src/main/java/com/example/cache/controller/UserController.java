@@ -10,6 +10,8 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class UserController {
 
@@ -20,6 +22,13 @@ public class UserController {
     @Autowired
     public UserController(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    @Cacheable(value = "users")
+    @GetMapping
+    public List<User> getAll(){
+        LOG.info("Getting all users");
+        return userRepository.findAll();
     }
 
     @Cacheable(value = "users", key = "#userId", unless = "#result.followers < 12000")
